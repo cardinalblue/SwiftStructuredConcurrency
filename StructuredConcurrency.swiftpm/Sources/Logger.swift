@@ -7,13 +7,19 @@ struct Logger {
         Swift.print(string)
     }
 
-    func printInTask(_ string: String, delay: Float = 0) async {
+    func printInTask(_ string: String, delay: Float = 0) {
+        Task {
+            try? await Task.sleep(nanoseconds: UInt64(delay * 1000_000_000))
+            Swift.print(string)
+        }
+    }
+
+    func asyncPrint(_ string: String, delay: Float = 0) async {
         let task = Task {
             try? await Task.sleep(nanoseconds: UInt64(delay * 1000_000_000))
             Swift.print(string)
         }
-        let result = await task.result
-        Swift.print(string, result)
+        await task.value
     }
 
     static func logCurrentThread(withPrefix string: String = "") {

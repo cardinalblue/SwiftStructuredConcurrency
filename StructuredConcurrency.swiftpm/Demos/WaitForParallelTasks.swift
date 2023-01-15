@@ -22,7 +22,7 @@ public struct WaitForParallelTasksDemo {
 //            exporter.exportWithOperation()
             Logger.logCurrentThread(withPrefix: "")
             do {
-//                                try await exporter.exportWithAsyncAwait()
+//                try await exporter.exportWithAsyncAwait()
 //                try await exporter.exportWithTasks()
                 try await exporter.exportWithTaskGroup()
 
