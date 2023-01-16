@@ -22,22 +22,32 @@ public class BasicDemo {
         Logger.logCurrentThread(withPrefix: "🛣 Thread 0-2") // 6 or another
 
         /*
-         In the line 73 & 74, it will print "yoyo" then print "yaya" event though we execute printing "yaya" first.
+         In the line 28 & 29, it will print "yoyo" then print "yaya" event though we execute printing "yaya" first.
          This is because we executing print in tasks, so that the system won't wait for finishing printing "yaya".
          */
         Logger.printInTask("yaya", delay: 3)
         Logger.printInTask("yoyo", delay: 0)
 
         /*
-         In the following code, from 1-1 to 1-3, the asyncPrint won't execute at lines 81 & 82 but will wait until line 84 when we invoke them with await.
+         In the following code, from 1-1 to 1-3, the asyncPrint won't execute at lines 81 & 82 directly but will kind of executing them in the next runloop,
+         so you can see the yaya & yoyo will execute start from the first await (line 41)
          Also, it will only execute one for each asyncPrint, then keep the result until it release, so it will only executing once event though we await yaya twice
          */
         Logger.logCurrentThread(withPrefix: "🛣 Thread 1-1") // 6
         async let yaya: Void = Logger.asyncPrint("yaya", delay: 3)
         async let yoyo: Void = Logger.asyncPrint("yoyo", delay: 0)
         Logger.logCurrentThread(withPrefix: "🛣 Thread 1-2") // 6
+
+        await Task {
+            await Logger.asyncPrint("🛣 1-3", delay: 1) // You can try to mark this line and unmark the following one, then the yaya & yoyo will do after "Thread 1-3"
+//            Logger.logCurrentThread(withPrefix: "🛣 Thread 1-3")
+        }.value
+        await Task {
+            Logger.logCurrentThread(withPrefix: "🛣 Thread 1-4")
+        }.value
+
         await(yaya, yoyo, yaya)
-        Logger.logCurrentThread(withPrefix: "🛣 Thread 1-3") // 8
+        Logger.logCurrentThread(withPrefix: "🛣 Thread 1-5") // 8
     }
 
     public func aboutTaskAndDetachedTask() {
