@@ -16,25 +16,25 @@ public class BasicDemo {
          because of the 1 second delay (not 100%)
          */
         Logger.logCurrentThread(withPrefix: "🛣 Thread 0") // 3
-        await Logger().print("yaya", delay: 3)
+        await Logger.print("yaya", delay: 3)
         Logger.logCurrentThread(withPrefix: "🛣 Thread 0-1") // 6
-        await Logger().print("yoyo", delay: 0)
+        await Logger.print("yoyo", delay: 0)
         Logger.logCurrentThread(withPrefix: "🛣 Thread 0-2") // 6 or another
 
         /*
          In the line 73 & 74, it will print "yoyo" then print "yaya" event though we execute printing "yaya" first.
          This is because we executing print in tasks, so that the system won't wait for finishing printing "yaya".
          */
-        Logger().printInTask("yaya", delay: 3)
-        Logger().printInTask("yoyo", delay: 0)
+        Logger.printInTask("yaya", delay: 3)
+        Logger.printInTask("yoyo", delay: 0)
 
         /*
          In the following code, from 1-1 to 1-3, the asyncPrint won't execute at lines 81 & 82 but will wait until line 84 when we invoke them with await.
          Also, it will only execute one for each asyncPrint, then keep the result until it release, so it will only executing once event though we await yaya twice
          */
         Logger.logCurrentThread(withPrefix: "🛣 Thread 1-1") // 6
-        async let yaya: Void = Logger().asyncPrint("yaya", delay: 3)
-        async let yoyo: Void = Logger().asyncPrint("yoyo", delay: 0)
+        async let yaya: Void = Logger.asyncPrint("yaya", delay: 3)
+        async let yoyo: Void = Logger.asyncPrint("yoyo", delay: 0)
         Logger.logCurrentThread(withPrefix: "🛣 Thread 1-2") // 6
         await(yaya, yoyo, yaya)
         Logger.logCurrentThread(withPrefix: "🛣 Thread 1-3") // 8
@@ -63,14 +63,14 @@ public class BasicDemo {
 
             Task {
                 Logger.logCurrentThread(withPrefix: "🛣 task 0")
-                await Logger().print("task", delay: 0)
+                await Logger.print("task", delay: 0)
                 Logger.logCurrentThread(withPrefix: "🛣 task 1")
             }
             Logger.logCurrentThread(withPrefix: "🛣 current 1")
 
             Task.detached {
                 Logger.logCurrentThread(withPrefix: "🛣 detached task 0")
-                await Logger().print("detached task", delay: 0)
+                await Logger.print("detached task", delay: 0)
                 Logger.logCurrentThread(withPrefix: "🛣 detached task 1")
             }
             Logger.logCurrentThread(withPrefix: "🛣 current 2")
